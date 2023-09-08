@@ -53,10 +53,11 @@
     </Teleport>
   </section>
 
-  <div v-else-if="state === 'loading'">
+  <div v-if="loading" class="loader">
     <p>...LOADING</p>
   </div>
-  <div v-else>
+
+  <div v-else-if="error && error.state" class="error">
     <p>No data available</p>
   </div>
 
@@ -67,16 +68,16 @@
   />
 
   <Toast
-    v-if="toastState == 'error'"
+    v-if="error && error.state && !error.message"
     error
     title="Something went wrong! Please try again"
     @closeToast="toastState = 'hidden'"
   />
 
   <Toast
-    v-if="toastState == 'errorMessage'"
+    v-if="error && error.state && error.message"
     error
-    :title="error.value.message"
+    :title="error.message"
     @closeToast="toastState = 'hidden'"
   />
 </template>
@@ -93,39 +94,24 @@ const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
 const activeFilter = ref("available");
-const state = ref("loading");
-//const pets = ref(null);
 const pets = computed(() => {
   return store.getters.pets
-})
+});
+const loading = computed(() => store.getters.loading);
+const error = computed(() => store.getters.error);
 
 const modalState = ref("hidden");
 const activeModal = reactive({name: null, pet: null});
 const selectedPet = reactive({});
 
 const toastState = ref("hidden");
-const error = reactive({});
 
 function filterPets(status) {
   activeFilter.value = status;
   getPetsByStatus();
 }
 
-// function getPetsByStatus() {
-//   return fetchPetsByStatus(activeFilter)
-//     .then(response => {
-//       pets.value = [...response.data];
-//       state.value = "loaded";
-//     })
-//     .catch(error => {
-//       state.value = error;
-//       console.log("error", error);
-//     })
-// }
-
-
 function getPetsByStatus()  {
-  state.value = "loaded";
   return store.dispatch("getPetsByStatus", activeFilter.value)
 }
 
@@ -218,6 +204,14 @@ function orderPet(order) {
 .pet-button
   padding: .2rem .5rem
   border-top: 1px solid $color-border
+
+.loader, .error
+  display: flex
+  justify-content: center
+  font-size: 2rem
+.error
+  color: $color-danger
+
 
 @media (min-width: 1024px)
   .pets-list

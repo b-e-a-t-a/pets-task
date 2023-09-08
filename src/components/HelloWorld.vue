@@ -43,6 +43,7 @@
         <template v-slot:body>
           <purchase-form
             :pet-values="selectedPet.value"
+            @close-modal="closeModal"
             @submit="orderPet($event)"
         />
         </template>
@@ -60,7 +61,7 @@
 
 <script setup>
 import { ref, reactive, computed } from "vue";
-import { fetchPetsByStatus } from "../requests.js";
+import { fetchPetsByStatus, placeOrderForPet } from "../requests.js";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 
@@ -118,6 +119,23 @@ function closeModal() {
 function orderPet(order) {
   modalState.value = "loading";
   // activeModal.value = {};
+
+  placeOrderForPet(order)
+    .then(res => {
+      const responseData = res.data;
+      console.log('responseData', responseData);
+      modalState.value = "hidden";
+
+      getPetsByStatus();
+
+    })
+    .catch(err => {
+      error.value = err;
+      console.log("error", error.value);
+
+      modalState.value = "hidden";
+    })
+
 }
 </script>
 

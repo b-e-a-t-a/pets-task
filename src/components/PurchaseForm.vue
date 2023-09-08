@@ -95,12 +95,15 @@
     <div class="modal-buttons">
       <button
         type="button"
+        class="btn-default-medium btn-primary"
         @click="handleModalClosed"
       >
         Cancel
       </button>
       <button
         type="button"
+        :disabled="!formValid"
+        class="btn-default-medium btn-secondary"
         @click.prevent="submitForm"
       >
         Purchase
@@ -110,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { format } from "date-fns";
 
@@ -128,13 +131,34 @@ const shipDate = ref(null);
 const status = ref(null);
 const options = reactive(["placed", "approved", "delivered"]);
 
+const formValid = computed(() => {
+  return Boolean(
+    purchaseId.value &&
+    props.petValues.id &&
+    quantity.value && quantity.value > 0 &&
+    shipDate.value &&
+    status.value
+  );
+});
+
+const emit = defineEmits(['close-modal', 'submit'])
+
 function handleModalClosed() {
-  console.log('close-modal');
+  emit('close-modal');
 }
 
 function submitForm() {
-  const utcDate = zonedTimeToUtc(shipDate.value, "Europe/Berlin");
-  console.log('utcDate', utcDate);
+  const utcDate = zonedTimeToUtc(shipDate.value, 'Europe/Berlin');
+  const dto = {
+    id: purchaseId.value,
+    petId: props.petValues.id,
+    quantity: quantity.value,
+    shipDate: utcDate.toISOString(),
+    status: status.value,
+    complete: true,
+  };
+  Object.keys(dto).forEach(key => dto[key] === "" && delete dto[key]);
+  emit("submit", dto);
 }
 
 </script>

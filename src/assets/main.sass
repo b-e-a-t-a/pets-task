@@ -3,7 +3,7 @@
 $color-white: #FFFFFF
 $color-black: #000000
 $color-danger: #ff3d00
-$color-border: #b1d1f1
+$color-border: #a9bac9
 
 $color-primary: #34495E
 $color-primary-light: #00BCD4
@@ -74,6 +74,18 @@ $color-secondary-dark: #009688
     +hover_and_active
       +btn_color($color-primary, $color-primary, $color-white)
 
+=btn-close
+  position: absolute
+  top: 0
+  right: 0
+  border: none
+  font-size: 20px
+  padding: 10px
+  cursor: pointer
+  font-weight: bold
+  color: $color-secondary
+  background: transparent
+
 =buttons
   .btn-basic
     +btn-basic
@@ -83,6 +95,9 @@ $color-secondary-dark: #009688
 
   .btn-primary
     +btn-primary
+
+  .btn-close
+    +btn-close
 
 +buttons
 

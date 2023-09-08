@@ -1,0 +1,166 @@
+<template>
+  <form @submit.prevent="submitForm()">
+    <div>
+      <!-- pet name -->
+      <div class="Form__field">
+        <label for="petName">Pet name</label>
+        <div class="Form__input">
+          <input
+            id="petName"
+            name="petName"
+            type="text"
+            :value="props.petValues.name"
+            disabled
+          >
+        </div>
+      </div>
+
+      <!-- purchaseId -->
+      <div class="Form__field">
+        <label for="purchaseId">Purchase id</label>
+        <div class="Form__input">
+          <input
+            id="purchaseId"
+            name="purchaseId"
+            type="number"
+            v-model.number="purchaseId"
+            disabled
+          >
+        </div>
+      </div>
+
+      <!-- petId -->
+      <div class="Form__field">
+        <label for="petId">Pet id</label>
+        <div class="Form__input">
+          <input
+            id="petId"
+            name="petId"
+            type="number"
+            :value="props.petValues.id"
+            disabled
+          >
+        </div>
+      </div>
+
+      <!-- quantity -->
+      <div class="Form__field">
+        <label class="required" for="quantity">
+          Quantity
+        </label>
+        <div class="Form__input">
+          <input
+            id="quantity"
+            name="quantity"
+            type="number"
+            min="1"
+            max="10"
+            v-model.number="quantity"
+          >
+        </div>
+      </div>
+
+      <!-- shipDate -->
+      <div class="Form__field">
+        <label class="required" for="shipDate">
+          Ship date
+        </label>
+        <div class="Form__input">
+          <input
+            id="shipDate"
+            name="shipDate"
+            type="date"
+            v-model="shipDate"
+            :min="format(new Date(), 'yyyy-MM-dd')"
+          >
+        </div>
+      </div>
+
+      <!-- status -->
+      <div class="Form__select">
+        <label class="required" for="status-select">
+          Status
+        </label>
+        <select id="status-select" name="status" v-model="status">
+          <option v-for="(option, key) in options" :key="'option-' + key">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+
+      <div class="Form__info">* required field</div>
+
+    </div>
+
+    <div class="modal-buttons">
+      <button
+        type="button"
+        @click="handleModalClosed"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        @click.prevent="submitForm"
+      >
+        Purchase
+      </button>
+    </div>
+  </form>
+</template>
+
+<script setup>
+import { ref, reactive } from "vue";
+import { zonedTimeToUtc } from "date-fns-tz";
+import { format } from "date-fns";
+
+const props = defineProps({
+  petValues: {
+    type: Object,
+    required: true
+  }
+});
+
+const purchaseId = ref(Math.floor(100000000 + Math.random() * 900000000));
+const quantity = ref(0);
+
+const shipDate = ref(null);
+const status = ref(null);
+const options = reactive(["placed", "approved", "delivered"]);
+
+function handleModalClosed() {
+  console.log('close-modal');
+}
+
+function submitForm() {
+  const utcDate = zonedTimeToUtc(shipDate.value, "Europe/Berlin");
+  console.log('utcDate', utcDate);
+}
+
+</script>
+
+<style lang="sass">
+@import "../assets/main.sass"
+
+.Form
+  &__info
+    margin-top: 2rem
+    text-align: left
+    font-size: .8rem
+    color: $color-secondary-dark
+
+label
+  &.required:after
+    content: '*'
+    color: $color-secondary-dark
+
+.modal-buttons
+  display: flex
+  justify-content: space-between
+  align-items: stretch
+  flex-flow: row nowrap
+  margin-top: 3rem
+  button
+    min-width: 30%
+    text-transform: uppercase
+</style>

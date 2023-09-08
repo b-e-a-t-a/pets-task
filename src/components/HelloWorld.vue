@@ -57,6 +57,26 @@
   <div v-else>
     <p>No data available</p>
   </div>
+
+  <Toast
+    v-if="toastState == 'ordered'"
+    :title="'Pet order for id ' + selectedPet.value.id + ' has been placed successfully'"
+    @closeToast="toastState = 'hidden'"
+  />
+
+  <Toast
+    v-if="toastState == 'error'"
+    error
+    title="Something went wrong! Please try again"
+    @closeToast="toastState = 'hidden'"
+  />
+
+  <Toast
+    v-if="toastState == 'errorMessage'"
+    error
+    :title="error.value.message"
+    @closeToast="toastState = 'hidden'"
+  />
 </template>
 
 <script setup>
@@ -64,6 +84,7 @@ import { ref, reactive, computed } from "vue";
 import { fetchPetsByStatus, placeOrderForPet } from "../requests.js";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
+import Toast from "./Toast.vue";
 
 
 const filters = reactive(["available", "pending", "sold"]);
@@ -74,6 +95,9 @@ const pets = ref(null);
 const modalState = ref("hidden");
 const activeModal = reactive({name: null, pet: null});
 const selectedPet = reactive({});
+
+const toastState = ref("hidden");
+const error = reactive({});
 
 function filterPets(status) {
   activeFilter.value = status;
@@ -125,6 +149,7 @@ function orderPet(order) {
       const responseData = res.data;
       console.log('responseData', responseData);
       modalState.value = "hidden";
+      toastState.value = "ordered";
 
       getPetsByStatus();
 
@@ -134,6 +159,11 @@ function orderPet(order) {
       console.log("error", error.value);
 
       modalState.value = "hidden";
+      if (error.value.message) {
+        toastState.value = "errorMessage";
+      } else {
+        toastState.value = "error";
+      }
     })
 
 }

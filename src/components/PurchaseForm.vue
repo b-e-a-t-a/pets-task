@@ -94,14 +94,12 @@
 
     <div class="modal-buttons">
       <button
-        type="button"
         class="btn-default-medium btn-primary"
         @click="handleModalClosed"
       >
         Cancel
       </button>
       <button
-        type="button"
         :disabled="!formValid"
         class="btn-default-medium btn-secondary"
         @click.prevent="submitForm"
@@ -141,14 +139,14 @@ const formValid = computed(() => {
   );
 });
 
-const emit = defineEmits(['close-modal', 'submit'])
+const emit = defineEmits(["close-modal", "submit"])
 
 function handleModalClosed() {
-  emit('close-modal');
+  emit("close-modal");
 }
 
 function submitForm() {
-  const utcDate = zonedTimeToUtc(shipDate.value, 'Europe/Berlin');
+  const utcDate = zonedTimeToUtc(shipDate.value, "Europe/Berlin");
   const dto = {
     id: purchaseId.value,
     petId: props.petValues.id,

@@ -3,7 +3,7 @@
     <p v-for="(filter, index) in filters" :key="index">
       <span
         @click="filterPets(filter)"
-         :class="{ active: filter === activeFilter }"
+        :class="{ active: filter === activeFilter }"
       >{{ filter }}</span>
     </p>
   </section>
@@ -30,7 +30,9 @@
           <p>Status: {{ pet.status }}</p>
         </article>
         <div v-if="pet.status === 'available'" class="pet-button">
-          <button class="btn-basic btn-wide btn-primary" @click="openModal('buyPet', pet)">buy</button>
+          <button class="btn-basic btn-wide btn-primary" @click="openModal('buyPet', pet)">
+            buy
+          </button>
         </div>
       </li>
     </ul>
@@ -81,16 +83,21 @@
 
 <script setup>
 import { ref, reactive, computed } from "vue";
-import { fetchPetsByStatus, placeOrderForPet } from "../requests.js";
+import { useStore } from "vuex";
+import { placeOrderForPet } from "../requests.js";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
 
+const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
 const activeFilter = ref("available");
 const state = ref("loading");
-const pets = ref(null);
+//const pets = ref(null);
+const pets = computed(() => {
+  return store.getters.pets
+})
 
 const modalState = ref("hidden");
 const activeModal = reactive({name: null, pet: null});
@@ -104,16 +111,22 @@ function filterPets(status) {
   getPetsByStatus();
 }
 
-function getPetsByStatus() {
-  return fetchPetsByStatus(activeFilter)
-    .then(response => {
-      pets.value = [...response.data];
-      state.value = "loaded";
-    })
-    .catch(error => {
-      state.value = error;
-      console.log("error", error);
-    })
+// function getPetsByStatus() {
+//   return fetchPetsByStatus(activeFilter)
+//     .then(response => {
+//       pets.value = [...response.data];
+//       state.value = "loaded";
+//     })
+//     .catch(error => {
+//       state.value = error;
+//       console.log("error", error);
+//     })
+// }
+
+
+function getPetsByStatus()  {
+  state.value = "loaded";
+  return store.dispatch("getPetsByStatus", activeFilter.value)
 }
 
 getPetsByStatus();

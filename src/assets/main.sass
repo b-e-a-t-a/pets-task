@@ -8,8 +8,83 @@ $color-border: #b1d1f1
 $color-primary: #34495E
 $color-primary-light: #00BCD4
 $color-primary-super-light: #a2dee6
+$color-primary-hovered: darken($color-primary, 10%)
+$color-primary-active: darken($color-primary, 20%)
+$color-primary-disabled: lighten($color-primary, 50%)
+
 $color-secondary: #41B883
 $color-secondary-dark: #009688
+
+// ## BUTTONS ##
+=btn_color($color, $background: null, $text: null)
+  @if $background
+    background: $background
+  @if $text
+    color: $text
+  @else
+    color: $color
+
+=disabled
+  &:disabled,
+  &.disabled
+    cursor: not-allowed
+    @content
+
+=hover
+  &:hover,
+  &.hover
+    @content
+
+=active
+  &.active
+    @content
+
+=hover_and_active
+  &:hover,
+  &.hover,
+  &.active
+    @content
+
+=btn-basic
+  display: inline-block
+  text-align: center
+  text-decoration: none
+  text-transform: uppercase
+  outline: none
+  padding: .5rem 1.5rem
+  cursor: pointer
+  border-radius: 5px
+  transition: background .3s, color .3s, font-weight .3s, border-color .3s
+
+=btn-wide
+  padding-left: 4rem
+  padding-right: 4rem
+
+=btn-primary
+  +btn-basic
+  +btn_color($color-primary, $color-primary, $color-white)
+  border: 1px solid $color-primary
+
+  +hover_and_active
+    +btn_color($color-primary, $color-primary-hovered, $color-white)
+    border: 1px solid $color-primary-hovered
+
+  +disabled
+    opacity: .5
+    +hover_and_active
+      +btn_color($color-primary, $color-primary, $color-white)
+
+=buttons
+  .btn-basic
+    +btn-basic
+
+  .btn-wide
+    +btn-wide
+
+  .btn-primary
+    +btn-primary
+
++buttons
 
 // # MAIN STYLES ##
 

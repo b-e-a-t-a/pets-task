@@ -9,9 +9,25 @@
   </section>
 
   <section v-if="pets">
-    <template></template>
     <ul class="pets-list">
-      <li>list</li>
+      <li
+        v-for="(pet, index) in pets"
+        :key="index"
+      >
+        <article class="pet-item">
+          <p>Id: {{ pet.id }}</p>
+          <p>Category: {{ pet.category && pet.category.name}}</p>
+          <p>Name: {{ pet.name }}</p>
+          <p v-if="pet.photuUrls">
+            <img :src="pet.photuUrls"/>
+          </p>
+          <p v-else>No photo available</p>
+          <p>Status: {{ pet.status }}</p>
+        </article>
+        <div v-if="pet.status === 'available'">
+          <button class="btn-basic btn-wide btn-primary" @click="openModal('buyPet', pet)">buy</button>
+        </div>
+      </li>
     </ul>
   </section>
   <div v-else-if="state === 'loading'">
@@ -24,6 +40,8 @@
 
 <script setup>
 import { ref, reactive } from "vue";
+import { fetchPetsByStatus } from "../requests.js";
+
 
 const filters = reactive(["available", "pending", "sold"]);
 const activeFilter = ref("available");
@@ -32,6 +50,25 @@ const pets = ref(null);
 
 function filterPets(status) {
   activeFilter.value = status;
+  getPetsByStatus();
+}
+
+function getPetsByStatus() {
+  return fetchPetsByStatus(activeFilter)
+    .then(response => {
+      pets.value = [...response.data];
+      state.value = "loaded";
+    })
+    .catch(error => {
+      state.value = error;
+      console.log("error", error);
+    })
+}
+
+getPetsByStatus();
+
+function openModal(modalName, pet) {
+  console.log('modal opened', modalName, pet);
 }
 </script>
 
@@ -59,6 +96,7 @@ function filterPets(status) {
   list-style: none
   li
     position: relative
+    padding-bottom: .5rem
     border-bottom: 1px solid $color-border
   &:last-child
     border-bottom: none

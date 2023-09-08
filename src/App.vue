@@ -1,47 +1,38 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <div class="header">
+      <h1>Pets you can buy</h1>
     </div>
   </header>
 
   <main>
-    <TheWelcome />
+    <Suspense>
+      <HelloWorld />
+      <template #fallback>
+        ...Loading
+      </template>
+    </Suspense>
   </main>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
+<style lang="sass" scoped>
+.logo
+  display: block
+  margin: 0 auto .5rem
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
+.header
+  text-decoration: none
+  color: hsla(160, 100%, 37%, 1)
+  transition: 0.4s
+  h1
+    text-align: center
+    font-weight: 500
+    font-size: 2.6rem
+    line-height: 1.5
 </style>

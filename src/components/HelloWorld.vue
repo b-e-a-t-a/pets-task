@@ -1,44 +1,65 @@
-<script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-})
-</script>
-
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+  <section class="filters-wrapper">
+    <p v-for="(filter, index) in filters" :key="index">
+      <span
+        @click="filterPets(filter)"
+         :class="{ active: filter === activeFilter }"
+      >{{ filter }}</span>
+    </p>
+  </section>
+
+  <section v-if="pets">
+    <template></template>
+    <ul class="pets-list">
+      <li>list</li>
+    </ul>
+  </section>
+  <div v-else-if="state === 'loading'">
+    <p>...LOADING</p>
+  </div>
+  <div v-else>
+    <p>No data available</p>
   </div>
 </template>
 
-<style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
-}
+<script setup>
+import { ref, reactive } from "vue";
 
-h3 {
-  font-size: 1.2rem;
-}
+const filters = reactive(["available", "pending", "sold"]);
+const activeFilter = ref("available");
+const state = ref("loading");
+const pets = ref(null);
 
-.greetings h1,
-.greetings h3 {
-  text-align: center;
+function filterPets(status) {
+  activeFilter.value = status;
 }
+</script>
 
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
-}
+<style lang="sass" scoped>
+@import "../assets/main.sass"
+
+.filters-wrapper
+  display: flex
+  margin-bottom: 1rem
+  p
+    margin-right: 1rem
+  span
+    font-weight: 500
+    font-size: 0.9rem
+    cursor: pointer
+    &.active
+      padding: 5px
+      background: $color-secondary
+      color: $color-white
+      border-radius: 4px
+
+.pets-list
+  margin: 0
+  padding: 0
+  list-style: none
+  li
+    position: relative
+    border-bottom: 1px solid $color-border
+  &:last-child
+    border-bottom: none
 </style>

@@ -14,38 +14,19 @@
         v-for="(pet, index) in pets"
         :key="index"
       >
-        <article class="pet-item">
-          <p v-if="pet.photoUrls">
-            <img
-              :src="pet.photuUrls"
-              alt="pet photo"
-              width="50"
-              height="50"
-            >
-          </p>
-          <p v-else>No photo available</p>
-          <p>Id: {{ pet.id }}</p>
-          <p>Name: {{ pet.name }}</p>
-          <p>Category: {{ pet.category && pet.category.name}}</p>
-          <p>Status: {{ pet.status }}</p>
-        </article>
-        <div v-if="pet.status === 'available'" class="pet-button">
-          <button class="btn-basic btn-wide btn-primary" @click="openModal('buyPet', pet)">
-            buy
-          </button>
-        </div>
+        <PetListItem :pet="pet" />
       </li>
     </ul>
 
     <Teleport to="body">
-      <Transition name="transform-translate">
-        <base-modal v-if="modalState === 'visible'">
+      <Transition>
+        <base-modal v-if="modalState.visibility === 'visible'">
           <template v-slot:header>
-            <h2>{{ modalTitle }}</h2>
+            <h2>{{ modalState.title }}</h2>
           </template>
           <template v-slot:body>
             <purchase-form
-              :pet-values="selectedPet.value"
+              :pet-values="modalState.data"
           />
           </template>
         </base-modal>
@@ -64,7 +45,7 @@
   <TransitionGroup name="transform-translate">
     <Toast
       v-if="success"
-      :title="'Pet order for id ' + selectedPet.value.id + ' has been placed successfully'"
+      :title="'Pet order for id ' + modalState.data.id + ' has been placed successfully'"
     />
     <Toast
       v-if="error && error.state && !error.message"
@@ -88,21 +69,17 @@ import { useStore } from "vuex";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
+import PetListItem from "./PetListItem.vue";
 
 const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
 const activeFilter = computed(() => store.getters.activeFilter);
-const pets = computed(() => {
-  return store.getters.pets
-});
+const pets = computed(() => store.getters.pets);
 const loading = computed(() => store.getters.loading);
 const error = computed(() => store.getters.error);
 const success = computed(() => store.getters.success);
 const modalState = computed(() => store.getters.modal);
-
-const activeModal = reactive({name: null, pet: null});
-const selectedPet = reactive({});
 
 function filterPets(status) {
   store.commit("SET_ACTIVE_FILTER", status);
@@ -115,23 +92,6 @@ function getPetsByStatus()  {
 
 getPetsByStatus();
 
-function openModal(modalName, pet) {
-  store.commit("SET_MODAL_VISIBILITY", "visible");
-  activeModal.value = {
-    name: modalName,
-    pet: pet
-  };
-  selectedPet.value = pet;
-}
-
-const modalTitle = computed(() => {
-  switch (activeModal.value.name) {
-    case "buyPet":
-      return "Buy pet";
-    default:
-      return "";
-  }
-})
 
 </script>
 
@@ -162,15 +122,6 @@ const modalTitle = computed(() => {
     position: relative
     border: 1px solid $color-primary
     margin-bottom: 1rem
-.pet-item
-  p
-    padding: .2rem .5rem
-    border-bottom: 1px solid $color-border
-    &:last-child
-      border-bottom: none
-.pet-button
-  padding: .2rem .5rem
-  border-top: 1px solid $color-border
 
 .loader, .error
   display: flex

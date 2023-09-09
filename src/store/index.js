@@ -11,7 +11,11 @@ export default createStore({
       },
       success: false,
       newOrder: {},
-      modal: "hidden",
+      modal: {
+        visibility: "hidden",
+        title: "",
+        data: {}
+      },
       activeFilter: "available"
     },
     getters: {
@@ -94,7 +98,18 @@ export default createStore({
         };
       },
       SET_MODAL_VISIBILITY(state, visibility) {
-        state.modal = visibility;
+        state.modal.visibility = visibility;
+      },
+      SET_MODAL_TITLE(state, title) {
+        switch (title) {
+          case "buyPet":
+            return state.modal.title = "Buy pet";
+          default:
+            return state.modal.title = "";
+        }
+      },
+      SET_MODAL_PET(state, pet) {
+        state.modal.data = pet;
       },
       SET_ACTIVE_FILTER(state, status) {
         state.activeFilter = status;

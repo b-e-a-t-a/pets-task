@@ -8,6 +8,14 @@
     </p>
   </section>
 
+  <div v-if="loading" class="loader">
+    <p>...LOADING</p>
+  </div>
+
+  <div v-else-if="error && error.state" class="error">
+    <p>No data available</p>
+  </div>
+
   <section v-if="pets">
     <ul class="pets-list">
       <li
@@ -27,20 +35,15 @@
           <template v-slot:body>
             <purchase-form
               :pet-values="modalState.data"
-          />
+            />
+          </template>
+          <template v-slot:loader v-if="loading">
+            ...LOADING
           </template>
         </base-modal>
       </Transition>
     </Teleport>
   </section>
-
-  <div v-if="loading" class="loader">
-    <p>...LOADING</p>
-  </div>
-
-  <div v-else-if="error && error.state" class="error">
-    <p>No data available</p>
-  </div>
 
   <TransitionGroup name="transform-translate">
     <Toast
@@ -58,9 +61,6 @@
       :title="error.message"
     />
   </TransitionGroup>
-
-
-
 </template>
 
 <script setup>
@@ -92,7 +92,6 @@ function getPetsByStatus()  {
 
 getPetsByStatus();
 
-
 </script>
 
 <style lang="sass" scoped>
@@ -100,7 +99,7 @@ getPetsByStatus();
 
 .filters-wrapper
   display: flex
-  margin-bottom: 1rem
+  margin: 1rem auto
   p
     margin-right: 1rem
   span
@@ -127,6 +126,7 @@ getPetsByStatus();
   display: flex
   justify-content: center
   font-size: 2rem
+  margin: 2rem auto
 .error
   color: $color-danger
 
@@ -147,5 +147,4 @@ getPetsByStatus();
 @media (min-width: 1024px)
   .pets-list
     text-align: center
-
 </style>

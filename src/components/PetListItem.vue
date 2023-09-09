@@ -15,7 +15,10 @@
     <p>Status: {{ pet.status }}</p>
   </article>
   <div v-if="pet.status === 'available'" class="pet-button">
-    <button class="btn-basic btn-wide btn-primary" @click="openModal('buyPet', pet)">
+    <button
+      class="btn-basic btn-wide btn-primary"
+      @click="openModal('buyPet', pet)"
+    >
       buy
     </button>
   </div>

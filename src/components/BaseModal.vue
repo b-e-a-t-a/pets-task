@@ -6,9 +6,7 @@
       aria-labelledby="modalTitle"
       aria-describedby="modalDescription"
     >
-      <slot name="loader" />
-
-       <header class="modal-header" id="modalTitle">
+      <header class="modal-header" id="modalTitle">
         <slot name="header" />
         <button
           type="button"
@@ -20,9 +18,13 @@
         </button>
       </header>
 
-       <section class="modal-body" id="modalDescription">
+      <section class="modal-body" id="modalDescription">
         <slot name="body" />
-       </section>
+      </section>
+
+      <section class="modal-loader">
+        <slot name="loader" />
+      </section>
 
      </div>
   </div>
@@ -46,8 +48,6 @@ function handleModalClosed() {
   bottom: 0
   left: 0
   right: 0
-  // width: 100vw
-  // height: 100vh
   background-color: rgba(0, 0, 0, 0.5)
   display: flex
   justify-content: center
@@ -66,9 +66,22 @@ function handleModalClosed() {
     position: relative
     border-bottom: 1px solid $color-border
     color: $color-secondary
-
   .modal-body
     position: relative
     padding: 20px 30px
+  .modal-loader
+    display: flex
+    justify-content: center
+    color: $color-primary-light
+    font-size: 1.2rem
 
+  @media (max-width: 768px)
+    .modal
+      max-width: 80vw
+    .modal-header, .modal-body
+      padding: 10px 15px
+
+  @media (max-width: 322px)
+    .modal
+      width: 90vw
 </style>

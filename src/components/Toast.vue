@@ -61,6 +61,7 @@ function handleToastClosed() {
     h3
       padding-left: 1rem
       font-weight: 600
+      margin: 1rem auto
   span
     color: $color-black
     font-size: 1.5rem

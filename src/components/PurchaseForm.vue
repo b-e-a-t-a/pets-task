@@ -137,10 +137,6 @@ const shipDate = ref(null);
 const status = ref(null);
 const options = reactive(["placed", "approved", "delivered"]);
 
-const newOrder = computed(() => {
-  return store.getters.newOrder
-})
-
 const formValid = computed(() => {
   return Boolean(
     purchaseId.value &&

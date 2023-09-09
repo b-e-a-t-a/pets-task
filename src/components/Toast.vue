@@ -1,24 +1,22 @@
 <template>
-  <transition name="Toast">
-    <div
-      class="Toast"
-      role="alert"
-      :class="{ error: error }"
-    >
-      <div class="Toast__container">
-        <h3 v-if="title">
-          <i v-if="error">!!!</i>
-          {{ title }}
-        </h3>
-        <section class="Toast__content">
-          <slot name="content" />
-        </section>
-        <button class="btn-close" @click="handleToastClosed">
-          <span> X </span>
-        </button>
-      </div>
+  <div
+    class="Toast"
+    role="alert"
+    :class="{ error: error }"
+  >
+    <div class="Toast__container">
+      <h3 v-if="title">
+        <i v-if="error">!!!</i>
+        {{ title }}
+      </h3>
+      <section class="Toast__content">
+        <slot name="content" />
+      </section>
+      <button class="btn-close" @click="handleToastClosed">
+        <span> X </span>
+      </button>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script setup>
@@ -87,9 +85,4 @@ function handleToastClosed() {
       &:hover, &:active
         span
           color: $color-primary-super-light
-
-  &-enter-active,
-  &-leave-to
-    opacity: 0
-    transform: translateY(100%)
 </style>

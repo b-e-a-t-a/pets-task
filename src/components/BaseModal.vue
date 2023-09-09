@@ -1,34 +1,31 @@
 <template>
-  <transition name="modal-fade">
-    <div class="modal-wrapper">
-      <div
-        class="modal"
-        role="dialog"
-        aria-labelledby="modalTitle"
-        aria-describedby="modalDescription"
-      >
-        <slot name="loader" />
+  <div class="modal-wrapper">
+    <div
+      class="modal"
+      role="dialog"
+      aria-labelledby="modalTitle"
+      aria-describedby="modalDescription"
+    >
+      <slot name="loader" />
 
-        <header class="modal-header" id="modalTitle">
-          <slot name="header" />
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Handle close modal"
-            @click="handleModalClosed"
-          >
-            x
-          </button>
-        </header>
+       <header class="modal-header" id="modalTitle">
+        <slot name="header" />
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Handle close modal"
+          @click="handleModalClosed"
+        >
+          x
+        </button>
+      </header>
 
-        <section class="modal-body" id="modalDescription">
-          <slot name="body" />
-         </section>
+       <section class="modal-body" id="modalDescription">
+        <slot name="body" />
+       </section>
 
-      </div>
-    </div>
-  </transition>
-
+     </div>
+  </div>
 </template>
 
 <script setup>
@@ -74,11 +71,4 @@ function handleModalClosed() {
     position: relative
     padding: 20px 30px
 
-  .modal-fade-enter-from,
-  .modal-fade-leave-to
-    opacity: 0
-
-  .modal-fade-enter-active
-  .modal-fade-leave-active
-    transition: opacity .5s ease
 </style>

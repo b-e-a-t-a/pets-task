@@ -38,16 +38,18 @@
     </ul>
 
     <Teleport to="body">
-      <base-modal v-if="modalState === 'visible'">
-        <template v-slot:header>
-          <h2>{{ modalTitle }}</h2>
-        </template>
-        <template v-slot:body>
-          <purchase-form
-            :pet-values="selectedPet.value"
-        />
-        </template>
-      </base-modal>
+      <Transition name="transform-translate">
+        <base-modal v-if="modalState === 'visible'">
+          <template v-slot:header>
+            <h2>{{ modalTitle }}</h2>
+          </template>
+          <template v-slot:body>
+            <purchase-form
+              :pet-values="selectedPet.value"
+          />
+          </template>
+        </base-modal>
+      </Transition>
     </Teleport>
   </section>
 
@@ -59,22 +61,25 @@
     <p>No data available</p>
   </div>
 
-  <Toast
-    v-if="success"
-    :title="'Pet order for id ' + selectedPet.value.id + ' has been placed successfully'"
-  />
+  <TransitionGroup name="transform-translate">
+    <Toast
+      v-if="success"
+      :title="'Pet order for id ' + selectedPet.value.id + ' has been placed successfully'"
+    />
+    <Toast
+      v-if="error && error.state && !error.message"
+      error
+      title="Something went wrong! Please try again"
+    />
+    <Toast
+      v-if="error && error.state && error.message"
+      error
+      :title="error.message"
+    />
+  </TransitionGroup>
 
-  <Toast
-    v-if="error && error.state && !error.message"
-    error
-    title="Something went wrong! Please try again"
-  />
 
-  <Toast
-    v-if="error && error.state && error.message"
-    error
-    :title="error.message"
-  />
+
 </template>
 
 <script setup>
@@ -174,6 +179,19 @@ const modalTitle = computed(() => {
 .error
   color: $color-danger
 
+.v-enter-active,
+.v-leave-active
+  transition: opacity 1s ease
+
+.v-enter-from,
+.v-leave-to
+  opacity: 0
+
+.transform-translate
+  &-enter-active,
+  &-leave-to
+    opacity: 0
+    transform: translateY(100%)
 
 @media (min-width: 1024px)
   .pets-list

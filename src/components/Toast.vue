@@ -22,6 +22,10 @@
 </template>
 
 <script setup>
+import { useStore } from "vuex";
+
+const store = useStore();
+
 defineProps({
   title: {
     type: String,
@@ -33,12 +37,10 @@ defineProps({
   }
 });
 
-const emit = defineEmits(["close-toast"]);
-
-setTimeout(() => emit("close-toast"), 5000);
+setTimeout(() => handleToastClosed(), 5000);
 
 function handleToastClosed() {
-  emit("close-toast");
+  store.commit("CLEAR_TOAST");
 }
 </script>
 

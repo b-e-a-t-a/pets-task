@@ -38,15 +38,13 @@
     </ul>
 
     <Teleport to="body">
-      <base-modal v-if="modalState === 'visible'" @close-modal="closeModal">
+      <base-modal v-if="modalState === 'visible'">
         <template v-slot:header>
           <h2>{{ modalTitle }}</h2>
         </template>
         <template v-slot:body>
           <purchase-form
             :pet-values="selectedPet.value"
-            @close-modal="closeModal"
-            @submit="orderPet($event)"
         />
         </template>
       </base-modal>
@@ -62,30 +60,26 @@
   </div>
 
   <Toast
-    v-if="toastState == 'ordered'"
+    v-if="success"
     :title="'Pet order for id ' + selectedPet.value.id + ' has been placed successfully'"
-    @closeToast="toastState = 'hidden'"
   />
 
   <Toast
     v-if="error && error.state && !error.message"
     error
     title="Something went wrong! Please try again"
-    @closeToast="toastState = 'hidden'"
   />
 
   <Toast
     v-if="error && error.state && error.message"
     error
     :title="error.message"
-    @closeToast="toastState = 'hidden'"
   />
 </template>
 
 <script setup>
-import { ref, reactive, computed } from "vue";
+import { reactive, computed } from "vue";
 import { useStore } from "vuex";
-import { placeOrderForPet } from "../requests.js";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
@@ -93,21 +87,20 @@ import Toast from "./Toast.vue";
 const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
-const activeFilter = ref("available");
+const activeFilter = computed(() => store.getters.activeFilter);
 const pets = computed(() => {
   return store.getters.pets
 });
 const loading = computed(() => store.getters.loading);
 const error = computed(() => store.getters.error);
+const success = computed(() => store.getters.success);
+const modalState = computed(() => store.getters.modal);
 
-const modalState = ref("hidden");
 const activeModal = reactive({name: null, pet: null});
 const selectedPet = reactive({});
 
-const toastState = ref("hidden");
-
 function filterPets(status) {
-  activeFilter.value = status;
+  store.commit("SET_ACTIVE_FILTER", status);
   getPetsByStatus();
 }
 
@@ -118,7 +111,7 @@ function getPetsByStatus()  {
 getPetsByStatus();
 
 function openModal(modalName, pet) {
-  modalState.value = "visible";
+  store.commit("SET_MODAL_VISIBILITY", "visible");
   activeModal.value = {
     name: modalName,
     pet: pet
@@ -135,37 +128,6 @@ const modalTitle = computed(() => {
   }
 })
 
-function closeModal() {
-  modalState.value = "hidden";
-}
-
-function orderPet(order) {
-  modalState.value = "loading";
-  // activeModal.value = {};
-
-  placeOrderForPet(order)
-    .then(res => {
-      const responseData = res.data;
-      console.log('responseData', responseData);
-      modalState.value = "hidden";
-      toastState.value = "ordered";
-
-      getPetsByStatus();
-
-    })
-    .catch(err => {
-      error.value = err;
-      console.log("error", error.value);
-
-      modalState.value = "hidden";
-      if (error.value.message) {
-        toastState.value = "errorMessage";
-      } else {
-        toastState.value = "error";
-      }
-    })
-
-}
 </script>
 
 <style lang="sass" scoped>

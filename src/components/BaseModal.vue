@@ -32,10 +32,11 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["close-modal"])
+import { useStore } from "vuex";
+const store = useStore();
 
 function handleModalClosed() {
-  emit("close-modal")
+  store.commit("SET_MODAL_VISIBILITY", "hidden");
 }
 </script>
 

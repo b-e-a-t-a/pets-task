@@ -11,6 +11,7 @@
             type="text"
             :value="props.petValues.name"
             disabled
+            class="disabled"
           >
         </div>
       </div>
@@ -25,6 +26,7 @@
             type="number"
             v-model.number="purchaseId"
             disabled
+            class="disabled"
           >
         </div>
       </div>
@@ -39,6 +41,7 @@
             type="number"
             :value="props.petValues.id"
             disabled
+            class="disabled"
           >
         </div>
       </div>
@@ -81,11 +84,13 @@
         <label class="required" for="status-select">
           Status
         </label>
-        <select id="status-select" name="status" v-model="status">
-          <option v-for="(option, key) in options" :key="'option-' + key">
-            {{ option }}
-          </option>
-        </select>
+        <div class="Form__input">
+          <select id="status-select" name="status" v-model="status">
+            <option v-for="(option, key) in options" :key="'option-' + key">
+              {{ option }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="Form__info">* required field</div>
@@ -114,6 +119,9 @@
 import { ref, reactive, computed } from "vue";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { format } from "date-fns";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const props = defineProps({
   petValues: {
@@ -129,6 +137,10 @@ const shipDate = ref(null);
 const status = ref(null);
 const options = reactive(["placed", "approved", "delivered"]);
 
+const newOrder = computed(() => {
+  return store.getters.newOrder
+})
+
 const formValid = computed(() => {
   return Boolean(
     purchaseId.value &&
@@ -139,13 +151,11 @@ const formValid = computed(() => {
   );
 });
 
-const emit = defineEmits(["close-modal", "submit"])
-
 function handleModalClosed() {
-  emit("close-modal");
+  store.commit("SET_MODAL_VISIBILITY", "hidden");
 }
 
-function submitForm() {
+async function submitForm() {
   const utcDate = zonedTimeToUtc(shipDate.value, "Europe/Berlin");
   const dto = {
     id: purchaseId.value,
@@ -156,7 +166,13 @@ function submitForm() {
     complete: true,
   };
   Object.keys(dto).forEach(key => dto[key] === "" && delete dto[key]);
-  emit("submit", dto);
+
+  await store.dispatch("setNewOrder", dto);
+  await store.dispatch("orderPet");
+  await store.dispatch("getPetsByStatus", "available");
+  await store.dispatch("clearNewOrder");
+
+  handleModalClosed();
 }
 
 </script>
@@ -164,14 +180,40 @@ function submitForm() {
 <style lang="sass">
 @import "../assets/main.sass"
 
+form
+  position: relative
+  input,
+  select
+    font-size: 1 rem
+    flex: 1 1 60%
+    letter-spacing: inherit
+    border: none
+    border: 1px solid $color-primary
+    border-radius: 4px
+    color: $color-black
+    text-indent: 2px
+    padding: 4px 8px
+    &.disabled
+      opacity: .5
+      cursor: not-allowed
+    &:focus,
+    &:active
+      background: none
+      border: 2px solid $color-black
+      cursor: pointer
 .Form
+  &__field
+    margin-bottom: .6rem
   &__info
     margin-top: 2rem
-    text-align: left
-    font-size: .8rem
     color: $color-secondary-dark
-
+  &__select
+    position: relative
+    display: block
+    transition: opacity .3s
 label
+  color: $color-secondary-dark
+  letter-spacing: inherit
   &.required:after
     content: '*'
     color: $color-secondary-dark

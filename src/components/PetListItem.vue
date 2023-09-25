@@ -25,9 +25,7 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
-
-const store = useStore();
+import { mapMutations } from "../mapState";
 
 defineProps({
   pet: {
@@ -35,11 +33,13 @@ defineProps({
     default: () => {}
   }
 })
+const { SET_MODAL_VISIBILITY, SET_MODAL_TITLE, SET_MODAL_PET} = mapMutations();
 
 function openModal(modalName, pet) {
-  store.commit("SET_MODAL_VISIBILITY", "visible");
-  store.commit("SET_MODAL_TITLE", modalName);
-  store.commit("SET_MODAL_PET", pet);
+
+  SET_MODAL_VISIBILITY("visible");
+  SET_MODAL_TITLE(modalName);
+  SET_MODAL_PET(pet);
 }
 
 </script>

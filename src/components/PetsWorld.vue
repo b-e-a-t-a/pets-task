@@ -64,22 +64,25 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue";
+import { reactive } from "vue";
 import { useStore } from "vuex";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
 import PetListItem from "./PetListItem.vue";
+import { mapGetters } from "../mapState";
 
 const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
-const activeFilter = computed(() => store.getters.activeFilter);
-const pets = computed(() => store.getters.pets);
-const loading = computed(() => store.getters.loading);
-const error = computed(() => store.getters.error);
-const success = computed(() => store.getters.success);
-const modalState = computed(() => store.getters.modal);
+
+const { activeFilter,
+    pets,
+    loading,
+    error,
+    success,
+    modal: modalState
+  } = mapGetters();
 
 function filterPets(status) {
   store.commit("SET_ACTIVE_FILTER", status);

@@ -120,6 +120,7 @@ import { ref, reactive, computed } from "vue";
 import { zonedTimeToUtc } from "date-fns-tz";
 import { format } from "date-fns";
 import { useStore } from "vuex";
+import { mapActions } from "../mapState";
 
 const store = useStore();
 
@@ -151,6 +152,8 @@ function handleModalClosed() {
   store.commit("SET_MODAL_VISIBILITY", "hidden");
 }
 
+const { setNewOrder, orderPet, getPetsByStatus, clearNewOrder } = mapActions();
+
 async function submitForm() {
   const utcDate = zonedTimeToUtc(shipDate.value, "Europe/Berlin");
   const dto = {
@@ -163,10 +166,14 @@ async function submitForm() {
   };
   Object.keys(dto).forEach(key => dto[key] === "" && delete dto[key]);
 
-  await store.dispatch("setNewOrder", dto);
-  await store.dispatch("orderPet");
-  await store.dispatch("getPetsByStatus", "available");
-  await store.dispatch("clearNewOrder");
+  // await store.dispatch("setNewOrder", dto);
+  // await store.dispatch("orderPet");
+  // await store.dispatch("getPetsByStatus", "available");
+  // await store.dispatch("clearNewOrder");
+  await setNewOrder(dto);
+  await orderPet();
+  await getPetsByStatus("available");
+  await clearNewOrder("clearNewOrder");
 
   handleModalClosed();
 }

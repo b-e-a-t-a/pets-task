@@ -15,7 +15,7 @@ import PetsWorld from './components/PetsWorld.vue';
     <Suspense>
       <PetsWorld />
       <template #fallback>
-        ...Loading
+        ...Loading...
       </template>
     </Suspense>
   </main>

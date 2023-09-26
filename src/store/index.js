@@ -4,6 +4,7 @@ import axios from "axios";
 export default createStore({
     state: {
       pets: [],
+      filteredPets: [],
       loading: false,
       error: {
         state: false,
@@ -19,13 +20,13 @@ export default createStore({
       activeFilter: "available"
     },
     getters: {
-      pets: (state) => state.pets,
       loading: (state) => state.loading,
       error: (state) => state.error,
       success: (state) => state.success,
-      newOrder: (state) => state.newOrder,
+      //newOrder: (state) => state.newOrder,
       modal: (state) => state.modal,
-      activeFilter: (state) => state.activeFilter,
+      activeFilter: (state) => state.activeFilter, //ok
+      activePets: (state) => state.filteredPets.length //ok
     },
     actions: {
       getPetsByStatus({commit}, status) {
@@ -35,7 +36,9 @@ export default createStore({
           .then(response => response.data)
           .then(pets => {
             commit("SET_PETS", pets);
-            commit("SET_LOADING", false)
+            commit("SET_FILTERED_PETS", pets);
+            commit("SET_LOADING", false);
+            commit("SET_ACTIVE_FILTER", status);
           })
           .catch(error => {
             commit("SET_LOADING", false)
@@ -45,8 +48,8 @@ export default createStore({
       setNewOrder({ commit }, order) {
         commit("SET_NEW_ORDER", order);
       },
-      clearNewOrder({ commit }) {
-        commit("CLEAR_NEW_ORDER")
+      clearNewOrder(context) {
+        context.commit("CLEAR_NEW_ORDER");
       },
       orderPet({commit, state}) {
         const order = state.newOrder;
@@ -65,18 +68,24 @@ export default createStore({
             commit("SET_ERROR", { state: true, message: error.message });
           })
       },
+      filterName({commit, state}, name) {
+        const petsByName = state.pets.filter((pet) => {
+          if (pet.name.toLowerCase().includes(name.toLowerCase())) return pet
+        })
+        commit("SET_FILTERED_PETS", petsByName);
+      }
     },
     mutations: {
-      SET_PETS(state, pets) {
+      SET_PETS(state, pets) { //ok
         state.pets = pets;
       },
-      SET_LOADING(state, flag) {
+      SET_LOADING(state, flag) { //ok
         state.loading = flag
       },
-      SET_ERROR(state, error) {
+      SET_ERROR(state, error) { //ok
         state.error = error;
       },
-      SET_SUCCESS(state, flag) {
+      SET_SUCCESS(state, flag) { //ok
         state.success = flag;
       },
       SET_NEW_ORDER(state, order) {
@@ -111,8 +120,11 @@ export default createStore({
       SET_MODAL_PET(state, pet) {
         state.modal.data = pet;
       },
-      SET_ACTIVE_FILTER(state, status) {
+      SET_ACTIVE_FILTER(state, status) { //ok
         state.activeFilter = status;
+      },
+      SET_FILTERED_PETS(state, filtered) { //ok
+        state.filteredPets = filtered;
       }
     }
 })

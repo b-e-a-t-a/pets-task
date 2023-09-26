@@ -1,12 +1,17 @@
 <template>
   <section class="filters-wrapper">
+    <p>Select status:</p>
     <p v-for="(filter, index) in filters" :key="index">
       <span
-        @click="filterPets(filter)"
+        @click="getPetsByStatus(filter)"
         :class="{ active: filter === activeFilter }"
       >{{ filter }}</span>
     </p>
   </section>
+
+  <Search/>
+
+  <h4 class="pets-number">Number of pets: <i>{{activePets}}</i></h4>
 
   <div v-if="loading" class="loader">
     <p>...LOADING</p>
@@ -64,36 +69,37 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { useStore } from "vuex";
 import BaseModal from "./BaseModal.vue";
 import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
 import PetListItem from "./PetListItem.vue";
+import Search from "./Search.vue";
 import { mapGetters } from "../mapState";
 
 const store = useStore();
 
 const filters = reactive(["available", "pending", "sold"]);
 
-const { activeFilter,
-    pets,
+const pets = computed(() => store.state.filteredPets);
+
+const {
+    activeFilter,
     loading,
     error,
     success,
-    modal: modalState
+    modal: modalState,
+    activePets
   } = mapGetters();
 
-function filterPets(status) {
-  store.commit("SET_ACTIVE_FILTER", status);
-  getPetsByStatus();
+
+function getPetsByStatus(status)  {
+  store.dispatch("filterName", "");
+  store.dispatch("getPetsByStatus", status);
 }
 
-function getPetsByStatus()  {
-  return store.dispatch("getPetsByStatus", activeFilter.value)
-}
-
-getPetsByStatus();
+getPetsByStatus(store.state.activeFilter);
 
 </script>
 
@@ -115,6 +121,9 @@ getPetsByStatus();
       background: $color-secondary
       color: $color-white
       border-radius: 15px
+
+.pets-number
+  margin: 0.5rem auto
 
 .pets-list
   margin: 0

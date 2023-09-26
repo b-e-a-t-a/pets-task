@@ -180,7 +180,7 @@ async function submitForm() {
 
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @import "../assets/main.sass"
 
 form

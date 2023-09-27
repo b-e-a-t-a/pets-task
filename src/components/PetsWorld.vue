@@ -9,19 +9,17 @@
     </p>
   </section>
 
-  <Search/>
-
-  <h4 class="pets-number">Number of pets: <i>{{activePets}}</i></h4>
-
   <div v-if="loading" class="loader">
-    <p>...LOADING</p>
+    <Loader />
   </div>
 
   <div v-else-if="error && error.state" class="error">
     <p>No data available</p>
   </div>
 
-  <section v-if="pets">
+  <section v-else-if="pets">
+    <Search/>
+    <h4 class="pets-number">Number of pets: <i>{{activePets}}</i></h4>
     <ul class="pets-list">
       <li
         v-for="(pet, index) in pets"
@@ -43,7 +41,7 @@
             />
           </template>
           <template v-slot:loader v-if="loading">
-            ...LOADING
+            <Loader/>
           </template>
         </base-modal>
       </Transition>
@@ -76,6 +74,7 @@ import PurchaseForm from "./PurchaseForm.vue";
 import Toast from "./Toast.vue";
 import PetListItem from "./PetListItem.vue";
 import Search from "./Search.vue";
+import Loader from "./Loader.vue";
 import { mapGetters } from "../mapState";
 
 const store = useStore();

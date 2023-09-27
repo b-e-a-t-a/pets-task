@@ -1,11 +1,17 @@
 <template>
-  <h4>Search dog by name:</h4>
-  <input
-    type="text"
-    placeholder="Start searching"
-    :value="text"
-    @keyup="search"
-  />
+  <div class="Form__field">
+    <label for="searchText">Search dog by name:</label>
+    <div class="Form__input">
+      <input
+        id="searchText"
+        type="text"
+        name="searchText"
+        placeholder="Start searching"
+        :value="text"
+        @keyup="search"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -14,7 +20,7 @@ import { useStore } from "vuex";
 
 const store = useStore();
 
-const text = computed(() => store.state.text);
+const text = computed(() => store.state.searchText);
 
 const search = (e) => {
   store.commit("UPDATE_TEXT", e.target.value);

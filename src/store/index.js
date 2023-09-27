@@ -19,13 +19,12 @@ export default createStore({
         data: {}
       },
       activeFilter: "available",
-      text: ""
+      searchText: ""
     },
     getters: {
       loading: (state) => state.loading,
       error: (state) => state.error,
       success: (state) => state.success,
-      //newOrder: (state) => state.newOrder,
       modal: (state) => state.modal,
       activeFilter: (state) => state.activeFilter, //ok
       activePets: (state) => state.filteredPets.length //ok
@@ -72,14 +71,14 @@ export default createStore({
       },
       filterByName({commit, state}, name) {
         const petsByName = state.pets.filter((pet) => {
-          if (pet.name.toLowerCase().includes(name.toLowerCase())) return pet
+          if (pet.name && pet.name.toLowerCase().includes(name.toLowerCase())) return pet
         })
         commit("SET_FILTERED_PETS", petsByName);
       }
     },
     mutations: {
       UPDATE_TEXT(state, text) { //ok
-        state.text = text;
+        state.searchText = text;
       },
       SET_PETS(state, pets) { //ok
         state.pets = pets;

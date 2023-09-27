@@ -183,44 +183,6 @@ async function submitForm() {
 <style lang="sass" scoped>
 @import "../assets/main.sass"
 
-form
-  position: relative
-  input,
-  select
-    font-size: 1 rem
-    flex: 1 1 60%
-    letter-spacing: inherit
-    border: none
-    border: 1px solid $color-primary
-    border-radius: 4px
-    color: $color-black
-    text-indent: 2px
-    padding: 4px 8px
-    &.disabled
-      opacity: .5
-      cursor: not-allowed
-    &:focus,
-    &:active
-      background: none
-      border: 2px solid $color-black
-      cursor: pointer
-.Form
-  &__field
-    margin-bottom: .6rem
-  &__info
-    margin-top: 2rem
-    color: $color-secondary-dark
-  &__select
-    position: relative
-    display: block
-    transition: opacity .3s
-label
-  color: $color-secondary-dark
-  letter-spacing: inherit
-  &.required:after
-    content: '*'
-    color: $color-secondary-dark
-
 .modal-buttons
   display: flex
   justify-content: space-between

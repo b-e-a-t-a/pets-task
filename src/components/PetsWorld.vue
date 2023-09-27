@@ -95,8 +95,9 @@ const {
 
 
 function getPetsByStatus(status)  {
-  store.dispatch("filterName", "");
+  store.dispatch("filterByName", "");
   store.dispatch("getPetsByStatus", status);
+  store.commit("UPDATE_TEXT", "");
 }
 
 getPetsByStatus(store.state.activeFilter);

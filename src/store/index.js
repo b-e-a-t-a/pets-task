@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import axios from "axios";
 
 export default createStore({
+    //strict: true,
     state: {
       pets: [],
       filteredPets: [],
@@ -17,7 +18,8 @@ export default createStore({
         title: "",
         data: {}
       },
-      activeFilter: "available"
+      activeFilter: "available",
+      text: ""
     },
     getters: {
       loading: (state) => state.loading,
@@ -68,7 +70,7 @@ export default createStore({
             commit("SET_ERROR", { state: true, message: error.message });
           })
       },
-      filterName({commit, state}, name) {
+      filterByName({commit, state}, name) {
         const petsByName = state.pets.filter((pet) => {
           if (pet.name.toLowerCase().includes(name.toLowerCase())) return pet
         })
@@ -76,6 +78,9 @@ export default createStore({
       }
     },
     mutations: {
+      UPDATE_TEXT(state, text) { //ok
+        state.text = text;
+      },
       SET_PETS(state, pets) { //ok
         state.pets = pets;
       },

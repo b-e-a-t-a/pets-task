@@ -3,20 +3,22 @@
   <input
     type="text"
     placeholder="Start searching"
-    v-model="text"
+    :value="text"
     @keyup="search"
   />
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
 
-const text = ref("");
-const search = () => {
-  store.dispatch("filterName", text.value);
+const text = computed(() => store.state.text);
+
+const search = (e) => {
+  store.commit("UPDATE_TEXT", e.target.value);
+  store.dispatch("filterByName", e.target.value);
 }
 
 </script>
